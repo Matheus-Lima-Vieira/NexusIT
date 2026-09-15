@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import Chamado as ChamadoModel
+from app.models.chamado import Chamado as ChamadoModel
 from app.schemas.chamados import Chamado
 
 
