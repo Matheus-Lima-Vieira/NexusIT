@@ -3,20 +3,19 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from app.models.chamado import Chamado as ChamadoModel
-from app.schemas.chamados import Chamado
-
+from app.schemas.chamados import ChamadoCreate, ChamadoUpdate, ChamadoResponse
 
 router = APIRouter()
 
 
-@router.get("/chamados/")
+@router.get("/chamados/", response_model=list[ChamadoResponse])
 def receber_chamados(db: Session = Depends(get_db)):
     chamados = db.query(ChamadoModel).all()
 
     return chamados
 
-@router.post("/chamados/")
-def criar_chamado(chamado: Chamado, db: Session = Depends(get_db)):
+@router.post("/chamados/", response_model=ChamadoResponse)
+def criar_chamado(chamado: ChamadoCreate, db: Session = Depends(get_db)):
     novo_chamado = ChamadoModel(
         titulo=chamado.titulo,
         descricao=chamado.descricao,
@@ -31,7 +30,7 @@ def criar_chamado(chamado: Chamado, db: Session = Depends(get_db)):
 
     return novo_chamado
 
-@router.get("/chamados/{id}")
+@router.get("/chamados/{id}", response_model=ChamadoResponse)
 def receber_chamado(id: int, db: Session = Depends(get_db)):
     chamado = db.get(ChamadoModel, id)
 
@@ -40,8 +39,8 @@ def receber_chamado(id: int, db: Session = Depends(get_db)):
 
     return chamado
 
-@router.put("/chamados/{id}")
-def alterar_chamado(id: int, dados: Chamado, db: Session = Depends(get_db)):
+@router.put("/chamados/{id}", response_model=ChamadoResponse)
+def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)):
     chamado = db.get(ChamadoModel, id)
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
