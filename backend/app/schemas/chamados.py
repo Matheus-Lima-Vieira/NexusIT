@@ -1,23 +1,10 @@
 from pydantic import BaseModel, ConfigDict
-from enum import Enum
-
-class StatusChamado(str, Enum):
-    ABERTO = "Aberto"
-    EM_ANDAMENTO = "Em andamento"
-    RESOLVIDO = "Resolvido"
-    FECHADO = "Fechado"
-
-class PrioridadeChamado(str, Enum):
-    MUITO_ALTA = "P1 - Muito alta"
-    ALTA = "P2 - Alta"
-    MEDIA = "P3 - Média"
-    BAIXA = "P4 - Baixa"
-    MUITO_BAIXA = "P5 - Muito baixa"
+from app.enums.chamados import StatusChamado, PrioridadeChamado
 
 class ChamadoBase(BaseModel):
     titulo: str
     descricao: str
-    status: StatusChamado
+    status: StatusChamado = StatusChamado.NOVO
     prioridade: PrioridadeChamado = PrioridadeChamado.MEDIA
     solicitante: str
 
@@ -26,8 +13,12 @@ class ChamadoCreate(ChamadoBase):
     pass
 
 
-class ChamadoUpdate(ChamadoBase):
-    pass
+class ChamadoUpdate(BaseModel):
+    titulo: str | None = None
+    descricao: str | None = None
+    status: StatusChamado | None = None
+    prioridade: PrioridadeChamado | None = None
+    solicitante: str | None = None
 
 
 class ChamadoResponse(ChamadoBase):

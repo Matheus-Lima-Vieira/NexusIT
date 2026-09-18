@@ -42,13 +42,14 @@ def receber_chamado(id: int, db: Session = Depends(get_db)):
 @router.put("/chamados/{id}", response_model=ChamadoResponse)
 def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)):
     chamado = db.get(ChamadoModel, id)
+
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
-    chamado.titulo = dados.titulo
-    chamado.descricao = dados.descricao
-    chamado.status = dados.status
-    chamado.prioridade = dados.prioridade
-    chamado.solicitante = dados.solicitante
+
+    dados_atualizacao = dados.model_dump(exclude_unset=True)
+
+    for campo, valor in dados_atualizacao.items():
+        setattr(chamado, campo, valor)
 
     db.commit()
     db.refresh(chamado)

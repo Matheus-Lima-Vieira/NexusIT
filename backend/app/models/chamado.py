@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, Enum
 
 from database import Base
+from app.enums.chamados import StatusChamado, PrioridadeChamado
 
 
 class Chamado(Base):
@@ -9,6 +10,19 @@ class Chamado(Base):
     id = Column(Integer, primary_key=True)
     titulo = Column(String(100), nullable=False)
     descricao = Column(Text, nullable=False)
-    status = Column(String(30), nullable=False)
-    prioridade = Column(String(20), nullable=False)
+    status = Column(
+        Enum(
+            StatusChamado,
+            values_callable=lambda enum: [item.value for item in enum]
+        ),
+        nullable=False
+    )
+
+    prioridade = Column(
+        Enum(
+            PrioridadeChamado,
+            values_callable=lambda enum: [item.value for item in enum]
+        ),
+        nullable=False
+    )
     solicitante = Column(String(100), nullable=False)
