@@ -3,7 +3,7 @@ from enum import Enum
 
 class StatusChamado(str, Enum):
     NOVO = "Novo"
-    ABERTO = "Aberto"
+    PENDENTE = "Pendente"
     EM_ANDAMENTO = "Em andamento"
     ENCERRADO = "Encerrado"
     CANCELADO = "Cancelado"
