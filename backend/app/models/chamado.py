@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Enum
+from sqlalchemy import Column, Integer, String, Text, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -26,6 +26,19 @@ class Chamado(Base):
         ),
         nullable=False
     )
-    solicitante = Column(String(100), nullable=False)
+    solicitante_id = Column(
+        Integer,
+        ForeignKey("usuarios.id"),
+        nullable=False,
+    )
+    solicitante = relationship(
+    "Usuario",
+    back_populates="chamados"
+    )
+
+    historicos = relationship(
+        "HistoricoChamado",
+        back_populates="chamado"
+    )
 
     historicos = relationship("HistoricoChamado", back_populates="chamado")

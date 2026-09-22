@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy.orm import relationship
 
 from database import Base
 from app.enums.chamados import PerfilUsuario
@@ -16,3 +17,5 @@ class Usuario(Base):
         Enum(PerfilUsuario, values_callable=lambda enum: [item.value for item in enum]),
         nullable=False,
     )
+
+    chamados = relationship("Chamado", back_populates="solicitante")
