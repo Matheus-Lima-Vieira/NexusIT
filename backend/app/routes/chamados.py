@@ -4,9 +4,33 @@ from sqlalchemy.orm import Session
 from database import get_db
 from app.models.chamado import Chamado as ChamadoModel
 from app.schemas.chamados import ChamadoCreate, ChamadoUpdate, ChamadoResponse
+from app.enums.chamados import StatusChamado
 
 router = APIRouter()
 
+TRANSICOES_PERMITIDAS = {
+    StatusChamado.NOVO: {
+        StatusChamado.PENDENTE,
+        StatusChamado.EM_ANDAMENTO,
+        StatusChamado.ENCERRADO,
+        StatusChamado.CANCELADO,
+    },
+    StatusChamado.PENDENTE: {
+        StatusChamado.NOVO,
+        StatusChamado.EM_ANDAMENTO,
+        StatusChamado.ENCERRADO,
+        StatusChamado.CANCELADO,
+    },
+    StatusChamado.EM_ANDAMENTO: {
+        StatusChamado.PENDENTE,
+        StatusChamado.ENCERRADO,
+        StatusChamado.CANCELADO,
+    },
+    StatusChamado.ENCERRADO: {
+        StatusChamado.EM_ANDAMENTO,
+    },
+    StatusChamado.CANCELADO: set(),
+}
 
 @router.get("/chamados/", response_model=list[ChamadoResponse])
 def receber_chamados(db: Session = Depends(get_db)):
@@ -45,6 +69,20 @@ def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)
 
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
+
+    if (
+        dados.status is not None
+        and dados.status not in TRANSICOES_PERMITIDAS[chamado.status]
+    ):
+        raise HTTPException(status_code=400, detail="Transição de status não permitida.")
+
+    if dados.prioridade is not None and chamado.status in {
+        StatusChamado.ENCERRADO,
+        StatusChamado.CANCELADO,
+    }:
+        raise HTTPException(
+            status_code=400,
+            detail="Não é possível alterar a prioridade após encerramento ou cancelamento do chamado")
 
     dados_atualizacao = dados.model_dump(exclude_unset=True)
 
