@@ -1,7 +1,13 @@
-from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 
-from app.enums.chamados import StatusChamado, PrioridadeChamado
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
+from app.enums.chamados import (
+    StatusChamado,
+    PrioridadeChamado,
+    TipoHistorico,
+    VisibilidadeHistorico,
+)
 
 class ChamadoBase(BaseModel):
     titulo: str = Field(min_length=3, max_length=100)
@@ -27,3 +33,21 @@ class ChamadoResponse(ChamadoBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class HistoricoResponse(BaseModel):
+    id: int
+    chamado_id: int
+    tipo: TipoHistorico
+    visibilidade: VisibilidadeHistorico
+    descricao: str
+    criado_em: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+    @field_serializer("criado_em")
+    def formatar_data(self, valor: datetime) -> str:
+        return valor.strftime("%Y-%m-%d - %H:%M:%S")
+
+class HistoricoCreate(BaseModel):
+    descricao: str = Field(min_length=1)
+    visibilidade: VisibilidadeHistorico = VisibilidadeHistorico.PUBLICO

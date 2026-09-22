@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, Enum
+from sqlalchemy.orm import relationship
 
 from database import Base
 from app.enums.chamados import StatusChamado, PrioridadeChamado
@@ -26,3 +27,5 @@ class Chamado(Base):
         nullable=False
     )
     solicitante = Column(String(100), nullable=False)
+
+    historicos = relationship("HistoricoChamado", back_populates="chamado")
