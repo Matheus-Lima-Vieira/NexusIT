@@ -25,3 +25,9 @@ class TipoHistorico(str, Enum):
 class VisibilidadeHistorico(str, Enum):
     PUBLICO = "Público"
     INTERNO = "Interno"
+
+
+class PerfilUsuario(str, Enum):
+    SOLICITANTE = "Solicitante"
+    TECNICO = "Técnico"
+    ADMIN = "Administrador"

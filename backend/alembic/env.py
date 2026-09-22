@@ -10,6 +10,7 @@ from alembic import context
 from database import Base
 from app.models.chamado import Chamado
 from app.models.historico import HistoricoChamado
+from app.models.usuario import Usuario 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
