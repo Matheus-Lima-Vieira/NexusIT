@@ -4,6 +4,12 @@ from sqlalchemy.orm import Session
 from database import get_db
 from app.models.chamado import Chamado as ChamadoModel
 from app.models.historico import HistoricoChamado
+from app.core.dependencies import (
+    get_usuario_atual,
+    exigir_tecnico_ou_admin,
+    exigir_admin,
+)
+from app.models.usuario import Usuario
 from app.schemas.chamados import (
     ChamadoCreate,
     ChamadoUpdate,
@@ -11,7 +17,12 @@ from app.schemas.chamados import (
     HistoricoResponse,
     HistoricoCreate
 )
-from app.enums.chamados import StatusChamado, TipoHistorico, VisibilidadeHistorico
+from app.enums.chamados import (
+    StatusChamado,
+    TipoHistorico,
+    VisibilidadeHistorico,
+    PerfilUsuario,
+)
 
 router = APIRouter()
 
@@ -44,23 +55,39 @@ NOMES_CAMPOS = {
     "descricao": "Descrição alterada",
     "status": "Status alterado",
     "prioridade": "Prioridade alterada",
-    "solicitante": "Solicitante alterado",
 }
 
 @router.get("/chamados/", response_model=list[ChamadoResponse])
-def receber_chamados(db: Session = Depends(get_db)):
-    chamados = db.query(ChamadoModel).all()
+def receber_chamados(
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(get_usuario_atual),
+):
+    if usuario_atual.perfil in {
+        PerfilUsuario.TECNICO,
+        PerfilUsuario.ADMIN,
+    }:
+        chamados = db.query(ChamadoModel).all()
+    else:
+        chamados = (
+            db.query(ChamadoModel)
+            .filter(ChamadoModel.solicitante_id == usuario_atual.id)
+            .all()
+        )
 
     return chamados
 
 @router.post("/chamados/", response_model=ChamadoResponse)
-def criar_chamado(chamado: ChamadoCreate, db: Session = Depends(get_db)):
+def criar_chamado(
+    chamado: ChamadoCreate,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(get_usuario_atual),
+):
     novo_chamado = ChamadoModel(
         titulo=chamado.titulo,
         descricao=chamado.descricao,
         status=chamado.status,
         prioridade=chamado.prioridade,
-        solicitante=chamado.solicitante,
+        solicitante_id=usuario_atual.id,
     )
 
     historico = HistoricoChamado(
@@ -78,22 +105,37 @@ def criar_chamado(chamado: ChamadoCreate, db: Session = Depends(get_db)):
     return novo_chamado
 
 @router.get("/chamados/{id}", response_model=ChamadoResponse)
-def receber_chamado(id: int, db: Session = Depends(get_db)):
+def receber_chamado(
+    id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(get_usuario_atual),
+    ):
     chamado = db.get(ChamadoModel, id)
 
+
     if chamado is None:
+        raise HTTPException(status_code=404, detail="Chamado não encontrado!")
+
+    if (
+        usuario_atual.perfil == PerfilUsuario.SOLICITANTE
+        and chamado.solicitante_id != usuario_atual.id
+    ):
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
 
     return chamado
 
 @router.put("/chamados/{id}", response_model=ChamadoResponse)
-def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)):
+def alterar_chamado(
+    id: int,
+    dados: ChamadoUpdate,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(exigir_tecnico_ou_admin),
+):
     chamado = db.get(ChamadoModel, id)
 
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
 
-    # Status transition rule
     if (
         dados.status is not None
         and dados.status not in TRANSICOES_PERMITIDAS[chamado.status]
@@ -102,7 +144,6 @@ def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)
             status_code=400, detail="Transição de status não permitida."
         )
 
-    # Priority rule
     if dados.prioridade is not None and chamado.status in {
         StatusChamado.ENCERRADO,
         StatusChamado.CANCELADO,
@@ -144,9 +185,12 @@ def alterar_chamado(id: int, dados: ChamadoUpdate, db: Session = Depends(get_db)
 
     return chamado
 
-
 @router.delete("/chamados/{id}")
-def excluir_chamado(id: int, db: Session = Depends(get_db)):
+def excluir_chamado(
+    id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(exigir_admin),
+):
     chamado = db.get(ChamadoModel, id)
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")

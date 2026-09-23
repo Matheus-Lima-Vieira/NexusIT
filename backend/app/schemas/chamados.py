@@ -14,7 +14,6 @@ class ChamadoBase(BaseModel):
     descricao: str = Field(min_length=5)
     status: StatusChamado = StatusChamado.NOVO
     prioridade: PrioridadeChamado = PrioridadeChamado.MEDIA
-    solicitante: str = Field(min_length=3, max_length=100)
 
 
 class ChamadoCreate(ChamadoBase):
@@ -26,12 +25,11 @@ class ChamadoUpdate(BaseModel):
     descricao: str | None = Field(default=None, min_length=5)
     status: StatusChamado | None = None
     prioridade: PrioridadeChamado | None = None
-    solicitante: str | None = Field(default=None, min_length=3, max_length=100)
 
 
 class ChamadoResponse(ChamadoBase):
     id: int
-
+    solicitante_id: int
     model_config = ConfigDict(from_attributes=True)
 
 class HistoricoResponse(BaseModel):
