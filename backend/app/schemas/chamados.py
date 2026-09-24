@@ -35,6 +35,7 @@ class ChamadoResponse(ChamadoBase):
 class HistoricoResponse(BaseModel):
     id: int
     chamado_id: int
+    autor_id: int
     tipo: TipoHistorico
     visibilidade: VisibilidadeHistorico
     descricao: str

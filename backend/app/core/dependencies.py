@@ -64,8 +64,9 @@ def exigir_perfil(*perfis: PerfilUsuario):
 
     return verificar_perfil
 
+exigir_admin = exigir_perfil(PerfilUsuario.ADMIN)
+
 exigir_tecnico_ou_admin = exigir_perfil(
     PerfilUsuario.TECNICO,
     PerfilUsuario.ADMIN
 )
-exigir_admin = exigir_perfil(PerfilUsuario.ADMIN)

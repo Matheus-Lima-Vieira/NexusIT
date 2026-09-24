@@ -38,7 +38,6 @@ class Chamado(Base):
 
     historicos = relationship(
         "HistoricoChamado",
-        back_populates="chamado"
+        back_populates="chamado",
+        cascade="all, delete-orphan"
     )
-
-    historicos = relationship("HistoricoChamado", back_populates="chamado")

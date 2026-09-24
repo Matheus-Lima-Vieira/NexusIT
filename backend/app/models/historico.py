@@ -13,6 +13,8 @@ class HistoricoChamado(Base):
 
     chamado_id = Column(Integer, ForeignKey("chamados.id"), nullable=False)
 
+    autor_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+
     tipo = Column(
         Enum(TipoHistorico, values_callable=lambda enum: [item.value for item in enum]),
         nullable=False,
@@ -31,3 +33,5 @@ class HistoricoChamado(Base):
     criado_em = Column(DateTime, server_default=func.now(), nullable=False)
 
     chamado = relationship("Chamado", back_populates="historicos")
+
+    autor = relationship("Usuario")

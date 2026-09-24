@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from app.routes.chamados import router as chamados_router
 from app.routes.auth import router as auth_router
+from app.routes.chamados import router as chamados_router
 from app.routes.usuarios import router as usuarios_router
 
 app = FastAPI()

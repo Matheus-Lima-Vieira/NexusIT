@@ -92,6 +92,7 @@ def criar_chamado(
 
     historico = HistoricoChamado(
         chamado=novo_chamado,
+        autor_id=usuario_atual.id,
         tipo=TipoHistorico.ALTERACAO,
         visibilidade=VisibilidadeHistorico.PUBLICO,
         descricao="Chamado criado.",
@@ -164,6 +165,7 @@ def alterar_chamado(
             historicos.append(
                 HistoricoChamado(
                     chamado=chamado,
+                    autor_id=usuario_atual.id,
                     tipo=TipoHistorico.ALTERACAO,
                     visibilidade=VisibilidadeHistorico.PUBLICO,
                     descricao=(
@@ -201,15 +203,34 @@ def excluir_chamado(
     return {"mensagem": "Removido com sucesso!"}
 
 @router.get("/chamados/{id}/historico", response_model=list[HistoricoResponse])
-def receber_historico(id: int, db: Session = Depends(get_db)):
+def receber_historico(
+    id: int,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(get_usuario_atual),
+):
     chamado = db.get(ChamadoModel, id)
 
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
 
-    historicos = (
+    if (
+        usuario_atual.perfil == PerfilUsuario.SOLICITANTE
+        and chamado.solicitante_id != usuario_atual.id
+    ):
+        raise HTTPException(status_code=404, detail="Chamado não encontrado!")
+
+    consulta = (
         db.query(HistoricoChamado)
         .filter(HistoricoChamado.chamado_id == id)
+    )
+
+    if usuario_atual.perfil == PerfilUsuario.SOLICITANTE:
+        consulta = consulta.filter(
+            HistoricoChamado.visibilidade == VisibilidadeHistorico.PUBLICO
+        )
+
+    historicos = (
+        consulta
         .order_by(HistoricoChamado.criado_em)
         .all()
     )
@@ -217,14 +238,35 @@ def receber_historico(id: int, db: Session = Depends(get_db)):
     return historicos
 
 @router.post("/chamados/{id}/historico", response_model=HistoricoResponse)
-def criar_anotacao(id: int, historico: HistoricoCreate, db: Session = Depends(get_db)):
+def criar_anotacao(
+    id: int,
+    historico: HistoricoCreate,
+    db: Session = Depends(get_db),
+    usuario_atual: Usuario = Depends(get_usuario_atual),
+):
     chamado = db.get(ChamadoModel, id)
 
     if chamado is None:
         raise HTTPException(status_code=404, detail="Chamado não encontrado!")
 
+    if (
+        usuario_atual.perfil == PerfilUsuario.SOLICITANTE
+        and chamado.solicitante_id != usuario_atual.id
+    ):
+        raise HTTPException(status_code=404, detail="Chamado não encontrado!")
+
+    if (
+        usuario_atual.perfil == PerfilUsuario.SOLICITANTE
+        and historico.visibilidade == VisibilidadeHistorico.INTERNO
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="Solicitantes não podem criar anotações internas.",
+        )
+
     nova_anotacao = HistoricoChamado(
         chamado=chamado,
+        autor_id=usuario_atual.id,
         tipo=TipoHistorico.ANOTACAO,
         visibilidade=historico.visibilidade,
         descricao=historico.descricao,
