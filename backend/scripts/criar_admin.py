@@ -5,6 +5,7 @@ from app.enums.chamados import PerfilUsuario
 from app.schemas.usuarios import UsuarioCreate
 from app.services.usuarios import criar_usuario
 from app.models.usuario import Usuario
+from app.models.chamado import Chamado
 
 
 def criar_primeiro_admin():
