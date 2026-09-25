@@ -1,0 +1,24 @@
+<div class="layout">
+    <header class="header">
+        <h1>Nexus IT</h1>
+
+        <button type="button" (click)="logout()">
+            Sair
+        </button>
+    </header>
+
+    <div class="conteudo">
+        <aside class="sidebar">
+            <nav>
+                <a routerLink="/dashboard">Dashboard</a>
+                <a routerLink="/chamados">Chamados</a>
+                <a routerLink="/perfil">Perfil</a>
+                <a routerLink="/usuarios">Usuários</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

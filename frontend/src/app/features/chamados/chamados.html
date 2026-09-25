@@ -1,1 +1,15 @@
-<p>chamados works!</p>
+<h1>Chamados</h1>
+
+<div class="lista-chamados">
+    @for (chamado of chamados(); track chamado.id) {
+    <div class="chamado">
+        <h2>#{{ chamado.id }} - {{ chamado.titulo }}</h2>
+
+        <p>{{ chamado.descricao }}</p>
+
+        <p>Status: {{ chamado.status }}</p>
+
+        <p>Prioridade: {{ chamado.prioridade }}</p>
+    </div>
+    }
+</div>

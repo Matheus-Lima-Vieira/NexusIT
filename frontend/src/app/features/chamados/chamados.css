@@ -1,0 +1,21 @@
+.lista-chamados {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.chamado {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.chamado h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.chamado p {
+    margin: 6px 0;
+}

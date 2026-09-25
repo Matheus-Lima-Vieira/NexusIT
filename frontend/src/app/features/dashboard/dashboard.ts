@@ -1,5 +1,4 @@
 import { Component, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { Auth as AuthService } from '../../core/services/auth';
 import { Usuario } from '../../shared/models/usuario';
 
@@ -12,10 +11,7 @@ import { Usuario } from '../../shared/models/usuario';
 export class Dashboard {
   usuario = signal<Usuario | null>(null);
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.authService.obterUsuarioAtual().subscribe({
@@ -29,10 +25,5 @@ export class Dashboard {
         console.error('Erro ao buscar usuário:', erro);
       },
     });
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
