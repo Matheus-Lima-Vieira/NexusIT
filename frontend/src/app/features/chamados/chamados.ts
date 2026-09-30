@@ -1,10 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Chamados as ChamadosService } from '../../core/services/chamados';
 import { Chamado } from '../../shared/models/chamado';
 
 @Component({
   selector: 'app-chamados',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './chamados.html',
   styleUrl: './chamados.css',
 })

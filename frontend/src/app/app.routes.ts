@@ -29,6 +29,13 @@ export const routes: Routes = [
                     ),
             },
             {
+                path: 'chamados/:id',
+                loadComponent: () =>
+                    import('./features/chamados-detalhe/chamados-detalhe').then(
+                        (m) => m.ChamadosDetalhe,
+                    ),
+            },
+            {
                 path: 'usuarios',
                 loadComponent: () =>
                     import('./features/usuarios/usuarios').then(

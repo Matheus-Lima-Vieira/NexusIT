@@ -1,0 +1,144 @@
+.detalhe-chamado {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.cabecalho-chamado {
+    margin-bottom: 24px;
+}
+
+.identificador {
+    font-size: 14px;
+    color: #666;
+}
+
+.cabecalho-chamado h1 {
+    margin: 6px 0 0;
+    font-size: 28px;
+}
+
+.informacoes-chamado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.campo {
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.rotulo {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+.descricao-chamado {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.descricao-chamado h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+}
+
+.descricao-chamado p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.historico-chamado {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.historico-chamado h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+}
+
+.lista-historico {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.item-historico {
+    padding: 14px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.cabecalho-historico {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.cabecalho-historico span {
+    font-size: 13px;
+    color: #666;
+}
+
+.item-historico p {
+    margin: 0 0 8px;
+}
+
+.item-historico small {
+    color: #666;
+}
+
+.anotacao-chamado {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.anotacao-chamado h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+}
+
+.anotacao-chamado textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+    font: inherit;
+}
+
+.visibilidade-anotacao {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.visibilidade-anotacao label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.anotacao-chamado button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}

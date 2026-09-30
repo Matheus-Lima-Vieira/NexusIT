@@ -2,7 +2,7 @@
 
 <div class="lista-chamados">
     @for (chamado of chamados(); track chamado.id) {
-    <div class="chamado">
+    <div class="chamado" [routerLink]="['/chamados', chamado.id]">
         <h2>#{{ chamado.id }} - {{ chamado.titulo }}</h2>
 
         <p>{{ chamado.descricao }}</p>

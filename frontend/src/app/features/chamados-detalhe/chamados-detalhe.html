@@ -1,0 +1,121 @@
+@if (chamado(); as chamadoAtual) {
+<section class="detalhe-chamado">
+
+    <header class="cabecalho-chamado">
+        <div>
+            <span class="identificador">Chamado #{{ chamadoAtual.id }}</span>
+            <h1>{{ chamadoAtual.titulo }}</h1>
+        </div>
+    </header>
+
+    <div class="informacoes-chamado">
+
+        <div class="campo">
+            <span class="rotulo">Status</span>
+        
+            @if (podeEditarChamado()) {
+            <select [(ngModel)]="statusSelecionado">
+                @for (status of statusOptions; track status) {
+                <option [value]="status">
+                    {{ status }}
+                </option>
+                }
+            </select>
+            } @else {
+            <strong>{{ chamadoAtual.status }}</strong>
+            }
+        </div>
+        
+        <div class="campo">
+            <span class="rotulo">Prioridade</span>
+        
+            @if (podeEditarChamado()) {
+            <select [(ngModel)]="prioridadeSelecionada">
+                @for (prioridade of prioridadeOptions; track prioridade) {
+                <option [value]="prioridade">
+                    {{ prioridade }}
+                </option>
+                }
+            </select>
+            } @else {
+            <strong>{{ chamadoAtual.prioridade }}</strong>
+            }
+            @if (podeEditarChamado() && temAlteracao()) {
+            <button type="button">
+                Salvar alterações
+            </button>
+            }
+        </div>
+
+        <div class="campo">
+            <span class="rotulo">Solicitante</span>
+            <strong>#{{ chamadoAtual.solicitante_id }}</strong>
+        </div>
+        <!-- Remover as duas linhas abaixo após os testes -->
+        <p>Perfil: {{ usuarioAtual()?.perfil }}</p>
+        <p>Pode editar: {{ podeEditarChamado() }}</p>
+
+    </div>
+
+    <section class="descricao-chamado">
+        <h2>Descrição</h2>
+        <p>{{ chamadoAtual.descricao }}</p>
+    </section>
+
+    <section class="historico-chamado">
+        <h2>Histórico</h2>
+    
+        <div class="lista-historico">
+            @for (item of historico(); track item.id) {
+            <article class="item-historico">
+    
+                <div class="cabecalho-historico">
+                    <strong>{{ item.tipo }}</strong>
+    
+                    <span>
+                        {{ item.criado_em }}
+                    </span>
+                </div>
+    
+                <p>{{ item.descricao }}</p>
+    
+                <small>
+                    Autor #{{ item.autor_id }}
+                    · {{ item.visibilidade }}
+                </small>
+    
+            </article>
+            } @empty {
+            <p>Nenhum registro no histórico.</p>
+            }
+        </div>
+    </section>
+
+    <section class="anotacao-chamado">
+        <h2>Adicionar anotação</h2>
+    
+        <textarea [(ngModel)]="novaAnotacao" placeholder="Digite sua anotação..." rows="5"></textarea>
+    
+        <div class="visibilidade-anotacao">
+            <span>Visibilidade:</span>
+    
+            <label>
+                <input type="radio" name="visibilidade" value="Público" [(ngModel)]="visibilidadeAnotacao" />
+                Público
+            </label>
+    
+            <label>
+                <input type="radio" name="visibilidade" value="Interno" [(ngModel)]="visibilidadeAnotacao" />
+                Interno
+            </label>
+        </div>
+    
+        <button type="button" (click)="adicionarAnotacao()">
+            Adicionar anotação
+        </button>
+    </section>
+
+</section>
+} @else {
+<p>Carregando chamado...</p>
+}
